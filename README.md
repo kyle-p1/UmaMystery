@@ -1,4 +1,4 @@
-# Uma Guess Who Lobby Template
+# UmaMystery
 
 Real-time Guess Who-style game with lobby code joining, random first turn, and configurable roles for multi-player formats.
 
