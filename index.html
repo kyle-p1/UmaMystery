@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uma Guess Who Lobby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <h1>UmaMystery</h1>
+      <p id="connection-status" class="source">Server: checking connection...</p>
+      <p class="source">
+        Character source: <a href="https://umamusu.wiki/List_of_Characters" target="_blank" rel="noreferrer">umamusu.wiki/List_of_Characters</a>
+      </p>
+    </header>
+
+    <section class="panel" id="connect-screen">
+      <div class="two-col">
+        <form class="card" id="create-form">
+          <h2>Create Lobby</h2>
+          <label>
+            Your name
+            <input type="text" id="create-name" maxlength="30" required>
+          </label>
+          <label>
+            Players with secret characters
+            <input type="number" id="create-holders" min="1" value="1" required>
+          </label>
+          <label>
+            Total question limit
+            <input type="number" id="create-questions" min="1" value="15" required>
+          </label>
+          <label>
+            Team count
+            <input type="number" id="create-teams" min="1" max="8" value="2" required>
+          </label>
+          <label>
+            Holder character assignment
+            <select id="create-character-mode" required>
+              <option value="random">Random for holders</option>
+              <option value="holder_choice">Holder chooses or random</option>
+            </select>
+          </label>
+          <label class="inline-checkbox">
+            <input type="checkbox" id="create-same-question">
+            Same question applies to all unsolved holders
+          </label>
+          <button type="submit" class="primary">Create Lobby</button>
+        </form>
+
+        <form class="card" id="join-form">
+          <h2>Join Lobby</h2>
+          <label>
+            Your name
+            <input type="text" id="join-name" maxlength="30" required>
+          </label>
+          <label>
+            Lobby code
+            <input type="text" id="join-code" maxlength="6" required>
+          </label>
+          <button type="submit">Join by Code</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="lobby-screen">
+      <div class="lobby-top">
+        <div>
+          <h2>Lobby <span id="lobby-code">------</span></h2>
+          <p id="lobby-role"></p>
+          <p id="invite-link" class="source"></p>
+        </div>
+        <button id="leave-lobby">Leave Lobby</button>
+      </div>
+
+      <div class="two-col">
+        <article class="card">
+          <h3>Players</h3>
+          <ul id="player-list" class="player-list"></ul>
+        </article>
+
+        <form class="card" id="config-form">
+          <h3>Host Config</h3>
+          <label>
+            Players with secret characters
+            <input type="number" id="config-holders" min="1" required>
+          </label>
+          <label>
+            Total question limit
+            <input type="number" id="config-questions" min="1" required>
+          </label>
+          <label>
+            Team count
+            <input type="number" id="config-teams" min="1" max="8" required>
+          </label>
+          <label>
+            Holder character assignment
+            <select id="config-character-mode" required>
+              <option value="random">Random for holders</option>
+              <option value="holder_choice">Holder chooses or random</option>
+            </select>
+          </label>
+          <label class="inline-checkbox">
+            <input type="checkbox" id="config-same-question">
+            Same question applies to all unsolved holders
+          </label>
+          <button type="submit">Save Config</button>
+        </form>
+      </div>
+
+      <div class="actions">
+        <button id="start-game" class="primary">Start Game</button>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="game-screen">
+      <div class="status-strip">
+        <p id="turn-status"></p>
+        <p id="question-status"></p>
+      </div>
+
+      <div id="winner-banner" class="banner hidden"></div>
+
+      <section class="card hidden" id="holder-selection-panel">
+        <h3>Choose Your Secret Character</h3>
+        <p class="hint">Pick a character card to lock it in, or assign random. Use the Zoom badge on an image for a closer look.</p>
+        <div class="picker-actions">
+          <button type="button" id="holder-selection-random" class="primary">Assign Random Character</button>
+        </div>
+        <div id="holder-selection-grid" class="choice-grid"></div>
+      </section>
+
+      <div class="two-col" id="player-reference-section">
+        <article class="card" id="holder-role-panel">
+          <h3>Your Role</h3>
+          <p id="role-summary"></p>
+          <div id="secret-card" class="character-card"></div>
+        </article>
+
+        <article class="card" id="holder-wiki-panel">
+          <h3>Holder Wiki Reference</h3>
+          <p class="hint">Reference this page while answering questions.</p>
+          <p class="source">
+            <a id="holder-wiki-link" href="https://umamusu.wiki/List_of_Characters" target="_blank" rel="noreferrer">Open wiki page in a new tab</a>
+          </p>
+          <iframe id="holder-wiki-frame" title="Uma Musume Wiki reference" loading="lazy" referrerpolicy="no-referrer"></iframe>
+        </article>
+      </div>
+
+      <div class="two-col" id="action-forms-section">
+        <form id="ask-form" class="card">
+          <h3>Ask Question</h3>
+          <label id="ask-target-wrap">
+            Target holder
+            <select id="ask-target"></select>
+          </label>
+          <label>
+            Question
+            <input id="ask-text" type="text" maxlength="180" placeholder="Example: Is your runner specialty long?" required>
+          </label>
+          <button type="submit">Submit Question</button>
+        </form>
+
+        <form id="guess-form" class="card">
+          <h3>Make Guess</h3>
+          <label>
+            Target holder
+            <select id="guess-target"></select>
+          </label>
+          <label id="guess-character-wrap">
+            Character
+            <select id="guess-character"></select>
+          </label>
+          <button type="submit" class="accent">Submit Guess</button>
+        </form>
+      </div>
+
+      <section class="card hidden" id="guesser-board-panel">
+        <h3>All Character Choices</h3>
+        <p class="hint">Click a card to select it for guessing. Click that same selected card again to mark or unmark elimination. Use the Zoom badge on an image for a closer look.</p>
+        <div id="guesser-choice-grid" class="choice-grid"></div>
+      </section>
+
+      <section class="card" id="pending-section">
+        <h3>Pending Question</h3>
+        <p id="pending-text">No pending question.</p>
+        <div id="answer-actions" class="answer-actions hidden">
+          <button type="button" data-answer="yes" class="primary">Answer Yes</button>
+          <button type="button" data-answer="no">Answer No</button>
+        </div>
+      </section>
+
+      <section class="card" id="log-section">
+        <h3>Game Log</h3>
+        <ol id="game-log" class="log-list"></ol>
+      </section>
+    </section>
+
+    <div id="image-zoom-modal" class="zoom-modal hidden" aria-hidden="true">
+      <div class="zoom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="image-zoom-caption">
+        <button type="button" id="image-zoom-close" class="zoom-modal-close">Close</button>
+        <img id="image-zoom-image" alt="Character zoom preview" loading="lazy">
+        <p id="image-zoom-caption" class="muted"></p>
+      </div>
+    </div>
+
+    <p id="toast" class="toast hidden"></p>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="characters.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
