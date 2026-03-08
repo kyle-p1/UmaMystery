@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: umamystery-game
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/characters
+    envVars:
+      - key: SKIP_CHARACTER_SYNC
+        value: "1"

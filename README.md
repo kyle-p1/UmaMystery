@@ -64,3 +64,14 @@ npm start
   - holders = 2
   - set `same question applies to all unsolved holders` ON for shared-question mode
   - set it OFF for separate target-by-target questions
+
+## Deploy on Render (Free)
+
+1. Push this repo to GitHub (already done).
+2. In Render, create a new Blueprint and select this repo.
+3. Render will detect `render.yaml` and create a free web service.
+4. Once deployed, open your Render URL and share it with players.
+
+Notes:
+- `SKIP_CHARACTER_SYNC=1` is set in `render.yaml` so startup is fast and stable on free instances.
+- Free instances can spin down when idle, so the first request after inactivity may be slower.
